@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 import 'package:machine_test_totalx/model/user_model/user_model.dart';
 
-class AuthViewModel extends ChangeNotifier {
+class Authcontroller extends ChangeNotifier {
   User? _user;
   String? _verificationId;
 

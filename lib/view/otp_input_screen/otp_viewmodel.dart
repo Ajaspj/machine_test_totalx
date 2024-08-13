@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:machine_test_totalx/view/authentication/auth_viewmodel.dart';
+import 'package:machine_test_totalx/controller/authentication_controller/auth_viewmodel.dart';
 import 'package:machine_test_totalx/view/homescreen/homescreen.dart';
 import 'package:provider/provider.dart';
 import 'package:stacked/stacked.dart';
@@ -8,7 +8,7 @@ class OtpViewModel extends BaseViewModel {
   final TextEditingController otpController = TextEditingController();
 
   Future<void> verifyOtp(BuildContext context) async {
-    final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    final authViewModel = Provider.of<Authcontroller>(context, listen: false);
     setBusy(true);
     try {
       await authViewModel.verifyOtp(otpController.text);
