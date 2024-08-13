@@ -10,10 +10,7 @@ class LoginScreen extends StatelessWidget {
       viewModelBuilder: () => LoginViewModel(),
       builder: (context, viewModel, child) => Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: Text('Login'),
-          centerTitle: true,
-        ),
+        appBar: AppBar(),
         body: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(16.0),
@@ -22,18 +19,11 @@ class LoginScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Image.asset("assets/images/image.png"),
                   SizedBox(height: 20),
-                  Text(
-                    'Welcome Back!',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blueAccent,
-                    ),
-                  ),
                   SizedBox(height: 10),
                   Text(
-                    'Enter your phone number to login',
+                    'Enter your phone number',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[600],
@@ -43,18 +33,10 @@ class LoginScreen extends StatelessWidget {
                   TextFormField(
                     controller: viewModel.phoneNumberController,
                     decoration: InputDecoration(
-                      labelText: 'Phone Number',
+                      labelText: 'Enter your phone number',
                       hintText: '0000000000', // Only the 10-digit number
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                      ),
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Text(
-                          '+91 ',
-                          style:
-                              TextStyle(fontSize: 16, color: Colors.grey[600]),
-                        ),
                       ),
                     ),
                     keyboardType: TextInputType.phone,
@@ -75,13 +57,13 @@ class LoginScreen extends StatelessWidget {
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () => viewModel.sendOtp(context),
-                    child: Text('Send OTP'),
+                    child: Text('Get OTP'),
                     style: ElevatedButton.styleFrom(
                       padding:
                           EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                       textStyle: TextStyle(fontSize: 18),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                     ),
                   ),
