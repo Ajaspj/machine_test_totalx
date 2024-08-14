@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:machine_test_totalx/controller/authentication_controller/auth_viewmodel.dart';
+import 'package:machine_test_totalx/controller/authentication_controller/auth_controller.dart';
 import 'package:machine_test_totalx/view/homescreen/homescreen.dart';
 import 'package:provider/provider.dart';
 import 'package:stacked/stacked.dart';
