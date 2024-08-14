@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:machine_test_totalx/controller/otp_controller/otp_controller.dart';
+import 'package:machine_test_totalx/controller/authentication_controller/auth_controller.dart';
 import 'package:machine_test_totalx/view/homescreen/homescreen.dart';
+import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
 
 class OtpVerificationScreen extends StatelessWidget {
@@ -17,11 +18,12 @@ class OtpVerificationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) {
-        final controller = OtpVerificationController();
-        controller.setVerificationId(verificationId);
+        final controller = AuthController();
+        controller.sendOtp(
+            phoneNumber); // Send the OTP when the screen is initialized
         return controller;
       },
-      child: Consumer<OtpVerificationController>(
+      child: Consumer<AuthController>(
         builder: (context, controller, child) {
           return Scaffold(
             body: Padding(
@@ -50,16 +52,35 @@ class OtpVerificationScreen extends StatelessWidget {
                         style: const TextStyle(fontSize: 14),
                       ),
                       const SizedBox(height: 20.0),
-                      TextField(
+                      Pinput(
+                        length: 6, // Set the length of the OTP
                         controller: controller.otpController,
-                        decoration: InputDecoration(
-                          labelText: 'OTP',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
+                        onChanged: controller.updateOtp,
+                        defaultPinTheme: PinTheme(
+                          width: 56,
+                          height: 56,
+                          textStyle: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.black),
                           ),
                         ),
-                        keyboardType: TextInputType.number,
-                        onChanged: controller.updateOtp,
+                        focusedPinTheme: PinTheme(
+                          width: 56,
+                          height: 56,
+                          textStyle: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.blue),
+                          ),
+                        ),
+                        showCursor: true,
                       ),
                       if (controller.errorMessage.isNotEmpty)
                         Padding(
@@ -74,7 +95,7 @@ class OtpVerificationScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text(
-                            "Don't get OTP? ",
+                            "Didn't get OTP? ",
                             style: TextStyle(fontSize: 14),
                           ),
                           GestureDetector(
@@ -99,7 +120,7 @@ class OtpVerificationScreen extends StatelessWidget {
                           onPressed: () async {
                             await controller.verifyOtp();
                             if (controller.errorMessage.isEmpty) {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => Homescreen(),

@@ -4,9 +4,8 @@ import 'package:machine_test_totalx/controller/authentication_controller/auth_co
 import 'package:machine_test_totalx/controller/firebase_storage_controller/firebase_storage_controller.dart';
 import 'package:machine_test_totalx/controller/firestore_controller/firestore_controller.dart';
 import 'package:machine_test_totalx/controller/login_controller/login_controller.dart';
-import 'package:machine_test_totalx/controller/otp_controller/otp_controller.dart';
 import 'package:machine_test_totalx/firebase_options.dart';
-import 'package:machine_test_totalx/view/homescreen/homescreen.dart';
+import 'package:machine_test_totalx/view/otp_input_screen/otp_screen.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -22,19 +21,22 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => Authcontroller()),
+        ChangeNotifierProvider(create: (context) => AuthController()),
         ChangeNotifierProvider(create: (context) => LoginController()),
         ChangeNotifierProvider(create: (context) => FirestoreController()),
         ChangeNotifierProvider(
             create: (context) => FirebaseStorageController()),
-        ChangeNotifierProvider(
-            create: (context) => OtpVerificationController()),
       ],
-      child: Consumer<Authcontroller>(
-        builder: (context, auth, _) =>
-            MaterialApp(debugShowCheckedModeBanner: false, home: Homescreen()
-                // auth.user == null ? LoginScreen() : Homescreen(),
-                ),
+      child: Consumer<AuthController>(
+        builder: (context, auth, _) => MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: OtpVerificationScreen(
+              phoneNumber: '',
+              verificationId: '',
+            )
+
+            // auth.user == null ? LoginScreen() : Homescreen(),
+            ),
       ),
     );
   }

@@ -1,85 +1,97 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
-import 'package:machine_test_totalx/model/user_model/user_model.dart';
+import 'package:machine_test_totalx/model/loginuser_model/loginuser_model.dart';
 
-class Authcontroller extends ChangeNotifier {
-  User? _user;
+class AuthController extends ChangeNotifier {
+  LoginUser? _user;
   String? _verificationId;
+  String _errorMessage = '';
+  final TextEditingController otpController = TextEditingController();
 
-  User? get user => _user;
+  LoginUser? get user => _user;
+  String get errorMessage => _errorMessage;
 
   final firebase_auth.FirebaseAuth _firebaseAuth =
       firebase_auth.FirebaseAuth.instance;
 
   Future<void> sendOtp(String phoneNumber) async {
-    await _firebaseAuth.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      verificationCompleted:
-          (firebase_auth.PhoneAuthCredential credential) async {
-        try {
-          await _firebaseAuth.signInWithCredential(credential);
-          _user = User(
-            id: _firebaseAuth.currentUser!.uid,
-            phoneNumber: _firebaseAuth.currentUser!.phoneNumber!,
-          );
-          notifyListeners();
-        } catch (e) {
-          print('Sign-in failed: $e');
-          // Handle sign-in failure
-        }
-      },
-      verificationFailed: (firebase_auth.FirebaseAuthException e) {
-        print('Verification failed: ${e.message}');
-        // Handle verification failure
-        _showError('Verification failed. Please try again.');
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        _verificationId = verificationId;
-        notifyListeners();
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        _verificationId = verificationId;
-      },
-    );
+    try {
+      await _firebaseAuth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted:
+            (firebase_auth.PhoneAuthCredential credential) async {
+          await _signInWithCredential(credential);
+        },
+        verificationFailed: (firebase_auth.FirebaseAuthException e) {
+          _setError('Verification failed: ${e.message}');
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          _verificationId = verificationId;
+          _setError('OTP sent to $phoneNumber');
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          _verificationId = verificationId;
+        },
+      );
+    } catch (e) {
+      _setError('Failed to send OTP. Please try again.');
+    }
   }
 
-  Future<void> verifyOtp(String otp) async {
+  Future<void> verifyOtp() async {
     if (_verificationId == null) {
-      print('Verification ID is not available.');
-      _showError('Verification ID is not available. Please try again.');
+      _setError('Verification ID is not available. Please try again.');
       return;
     }
 
     try {
       final credential = firebase_auth.PhoneAuthProvider.credential(
         verificationId: _verificationId!,
-        smsCode: otp,
+        smsCode: otpController.text,
       );
-      await _firebaseAuth.signInWithCredential(credential);
-      _user = User(
-        id: _firebaseAuth.currentUser!.uid,
-        phoneNumber: _firebaseAuth.currentUser!.phoneNumber!,
-      );
-      notifyListeners();
+      await _signInWithCredential(credential);
     } catch (e) {
-      print('OTP verification failed: $e');
-      _showError('OTP verification failed. Please try again.');
+      _setError('OTP verification failed. Please try again.');
     }
   }
 
-  void logout() async {
+  Future<void> resendOtp(String phoneNumber) async {
+    await sendOtp(phoneNumber);
+  }
+
+  Future<void> _signInWithCredential(
+      firebase_auth.PhoneAuthCredential credential) async {
+    try {
+      await _firebaseAuth.signInWithCredential(credential);
+      _user = LoginUser(
+        id: _firebaseAuth.currentUser!.uid,
+        phoneNumber: _firebaseAuth.currentUser!.phoneNumber!,
+      );
+      _errorMessage = '';
+      notifyListeners();
+    } catch (e) {
+      _setError('Sign-in failed. Please try again.');
+    }
+  }
+
+  Future<void> logout() async {
     try {
       await _firebaseAuth.signOut();
       _user = null;
       notifyListeners();
     } catch (e) {
-      print('Logout failed: $e');
-      // Handle logout failure
+      _setError('Logout failed. Please try again.');
     }
   }
 
-  void _showError(String message) {
-    // Implement a method to show error messages, e.g., using a Snackbar or Dialog
-    print(message); // Replace this with actual UI feedback
+  void updateOtp(String value) {
+    otpController.text = value;
+    _errorMessage = '';
+    notifyListeners();
+  }
+
+  void _setError(String message) {
+    _errorMessage = message;
+    notifyListeners();
   }
 }
