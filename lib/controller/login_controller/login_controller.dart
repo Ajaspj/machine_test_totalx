@@ -9,7 +9,7 @@ class LoginController extends ChangeNotifier {
 
   void sendOtp(BuildContext context) {
     if (formKey.currentState!.validate()) {
-      final authViewModel = Provider.of<AuthController>(context, listen: false);
+      final authViewModel = Provider.of<Authcontroller>(context, listen: false);
       final phoneNumber = '+91${phoneNumberController.text}';
       authViewModel.sendOtp(phoneNumber);
       Navigator.of(context).push(MaterialPageRoute(

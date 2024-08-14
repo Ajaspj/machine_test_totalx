@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:machine_test_totalx/controller/firestore_controller/firestore_controller.dart';
 import 'package:machine_test_totalx/controller/homescreen_controller/homescreen_controller.dart';
-import 'package:machine_test_totalx/view/add_user_screen/add_user_screen.dart';
+import 'package:machine_test_totalx/model/add_usermodel/add_usermodel.dart';
+import 'package:machine_test_totalx/view/homescreen/widgets/adduserdialog.dart';
 import 'package:machine_test_totalx/view/homescreen/widgets/showdialog.dart';
 import 'package:provider/provider.dart';
 
@@ -61,70 +62,76 @@ class Homescreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  const Text("Users Lists"),
+                  const Text("Users List"),
                   const SizedBox(height: 8),
                   Expanded(
                     child: Consumer<FirestoreController>(
-                      builder: (BuildContext context,
-                              FirestoreController controller, Widget? child) =>
-                          ListView.builder(
-                        itemCount: controller.users.length,
-                        itemBuilder: (context, index) {
-                          var user = controller.users[index];
+                      builder: (context, controller, child) {
+                        List<UserModel> filteredUsers = controller.users
+                            .where((user) => (user.name as String)
+                                .toLowerCase()
+                                .contains(homeScreenController.searchText))
+                            .toList();
 
-                          return Container(
-                            padding: const EdgeInsets.all(8.0),
-                            margin: const EdgeInsets.symmetric(vertical: 4.0),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.2),
-                                  blurRadius: 5.0,
-                                  spreadRadius: 1.0,
-                                  offset: const Offset(
-                                      0, 3), // shadow direction: bottom right
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundImage: user.image == null
-                                      ? null
-                                      : NetworkImage(user.image!),
-                                  child: user.image != null
-                                      ? null
-                                      : const Icon(Icons.person),
-                                  radius: 30, // Adjust the radius as needed
-                                ),
-                                const SizedBox(width: 16.0),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      user.name ?? '',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.0,
+                        return ListView.builder(
+                          itemCount: filteredUsers.length,
+                          itemBuilder: (context, index) {
+                            var user = filteredUsers[index];
+
+                            return Container(
+                              padding: const EdgeInsets.all(8.0),
+                              margin: const EdgeInsets.symmetric(vertical: 4.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    blurRadius: 5.0,
+                                    spreadRadius: 1.0,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage: user.image == null
+                                        ? null
+                                        : NetworkImage(user.image.toString()),
+                                    child: user.image != null
+                                        ? null
+                                        : const Icon(Icons.person),
+                                    radius: 30,
+                                  ),
+                                  const SizedBox(width: 16.0),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        user.name ?? '',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.0,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 4.0),
-                                    Text(
-                                      'Age: ${user.age ?? ''}',
-                                      style: TextStyle(
-                                        color: Colors.grey[600],
-                                        fontSize: 14.0,
+                                      const SizedBox(height: 4.0),
+                                      Text(
+                                        'Age: ${user.age ?? ''}',
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 14.0,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -140,7 +147,11 @@ class Homescreen extends StatelessWidget {
             );
           },
           backgroundColor: Colors.black,
-          child: const Icon(Icons.add),
+          child: const Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          shape: CircleBorder(),
         ),
       ),
     );

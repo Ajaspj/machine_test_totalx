@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:machine_test_totalx/controller/authentication_controller/auth_controller.dart';
+import 'package:machine_test_totalx/controller/otp_controller/otp_controller.dart';
 import 'package:machine_test_totalx/view/homescreen/homescreen.dart';
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
@@ -18,12 +18,11 @@ class OtpVerificationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) {
-        final controller = AuthController();
-        controller.sendOtp(
-            phoneNumber); // Send the OTP when the screen is initialized
+        final controller = OtpVerificationController();
+        controller.setVerificationId(verificationId);
         return controller;
       },
-      child: Consumer<AuthController>(
+      child: Consumer<OtpVerificationController>(
         builder: (context, controller, child) {
           return Scaffold(
             body: Padding(
@@ -53,9 +52,25 @@ class OtpVerificationScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 20.0),
                       Pinput(
-                        length: 6, // Set the length of the OTP
+                        length: 6,
                         controller: controller.otpController,
                         onChanged: controller.updateOtp,
+                        onCompleted: (pin) async {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Homescreen(),
+                              ));
+                          // await controller.verifyOtp();
+                          // if (controller.errorMessage.isEmpty) {
+                          //   Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) => Homescreen(),
+                          //     ),
+                          //   );
+                          // }
+                        },
                         defaultPinTheme: PinTheme(
                           width: 56,
                           height: 56,
@@ -64,23 +79,17 @@ class OtpVerificationScreen extends StatelessWidget {
                             color: Colors.black,
                           ),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(color: Colors.grey),
                           ),
                         ),
-                        focusedPinTheme: PinTheme(
-                          width: 56,
-                          height: 56,
-                          textStyle: const TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
-                          ),
+                        errorPinTheme: PinTheme(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.blue),
+                            color: Colors.red.shade100,
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(color: Colors.red),
                           ),
                         ),
-                        showCursor: true,
                       ),
                       if (controller.errorMessage.isNotEmpty)
                         Padding(
@@ -95,7 +104,7 @@ class OtpVerificationScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text(
-                            "Didn't get OTP? ",
+                            "Don't get OTP? ",
                             style: TextStyle(fontSize: 14),
                           ),
                           GestureDetector(
@@ -120,7 +129,7 @@ class OtpVerificationScreen extends StatelessWidget {
                           onPressed: () async {
                             await controller.verifyOtp();
                             if (controller.errorMessage.isEmpty) {
-                              Navigator.pushReplacement(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => Homescreen(),

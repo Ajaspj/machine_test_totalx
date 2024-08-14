@@ -21,9 +21,24 @@ class HomescreenController extends ChangeNotifier {
   void setSortOption(String option) {
     _sortOption = option;
     notifyListeners();
-    // Implement sorting logic based on the selected option
-    // For example:
-    // if (option == 'age_elder') { sortByAgeElder(); }
+
+    if (option == 'age_elder') {
+      _users.sort((a, b) {
+        int ageA = a['age'] ?? 0;
+        int ageB = b['age'] ?? 0;
+        return ageB.compareTo(ageA);
+      });
+    } else if (option == 'age_younger') {
+      _users.sort((a, b) {
+        int ageA = a['age'] ?? 0;
+        int ageB = b['age'] ?? 0;
+        return ageA.compareTo(ageB);
+      });
+    } else {
+      _users.sort((a, b) => 0);
+    }
+
+    notifyListeners();
   }
 
   Future<void> loadMoreUsers() async {

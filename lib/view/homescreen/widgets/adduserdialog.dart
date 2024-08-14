@@ -35,19 +35,27 @@ class AddUserDialog extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
+                    Text("Name"),
+                    SizedBox(
+                      height: 5,
+                    ),
                     TextField(
                       controller: controller.nameController,
                       decoration: const InputDecoration(
-                        labelText: 'Name',
+                        labelText: '',
                         border: OutlineInputBorder(),
                       ),
                     ),
                     const SizedBox(height: 16),
+                    Text("Age"),
+                    SizedBox(
+                      height: 5,
+                    ),
                     TextField(
                       keyboardType: TextInputType.number,
                       controller: controller.ageController,
                       decoration: const InputDecoration(
-                        labelText: 'Age',
+                        labelText: '',
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -61,6 +69,10 @@ class AddUserDialog extends StatelessWidget {
                               : () => Navigator.of(context).pop(),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0)),
+                            padding: EdgeInsets.symmetric(horizontal: 20.0),
+                            minimumSize: Size(100, 30),
                           ),
                           child: const Text('Cancel'),
                         ),
@@ -92,7 +104,10 @@ class AddUserDialog extends StatelessWidget {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text('Save'),
+                                const Text(
+                                  'Save',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                                 if (controller.addingUser) ...[
                                   SizedBox(
                                     width: 5,
@@ -104,6 +119,13 @@ class AddUserDialog extends StatelessWidget {
                                   ),
                                 ]
                               ],
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.0)),
+                              padding: EdgeInsets.symmetric(horizontal: 20.0),
+                              minimumSize: Size(100, 30),
                             ),
                           ),
                         ),

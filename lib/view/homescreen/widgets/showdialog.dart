@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-Future<void> showSortBottomSheet(BuildContext context, String selectedOption,
-    Function(String) onOptionSelected) async {
+Future<void> showSortBottomSheet(
+  BuildContext context,
+  String selectedOption,
+  Function(String) onOptionSelected,
+) async {
   await showModalBottomSheet(
     context: context,
     shape: RoundedRectangleBorder(
