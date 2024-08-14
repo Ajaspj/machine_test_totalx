@@ -32,7 +32,7 @@ class OtpVerificationScreen extends StatelessWidget {
                 children: [
                   Column(
                     children: [
-                      Image.asset('assets/images/image.png'),
+                      Image.asset('assets/images/image2.png'),
                       const SizedBox(height: 20.0),
                     ],
                   ),
@@ -102,7 +102,7 @@ class OtpVerificationScreen extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
+                                  builder: (context) => Homescreen(),
                                 ),
                               );
                             }
@@ -112,7 +112,7 @@ class OtpVerificationScreen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 16.0),
                           ),
                           child: const Text(
-                            'Verify OTP',
+                            'Verify',
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
