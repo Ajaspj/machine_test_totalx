@@ -1,39 +1,63 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:machine_test_totalx/controller/firebase_storage_controller/firebase_storage_controller.dart';
+import 'package:machine_test_totalx/controller/firestore_controller/firestore_controller.dart';
 import 'package:machine_test_totalx/model/add_usermodel/add_usermodel.dart';
+import 'package:provider/provider.dart';
 
 class UserController extends ChangeNotifier {
+  bool addingUser = false;
+
+  File? imageFile;
   final UserModel _userModel = UserModel();
   final ImagePicker _picker = ImagePicker();
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
 
   UserModel get userModel => _userModel;
 
   Future<void> pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      _userModel.image = File(pickedFile.path);
+      imageFile = File(pickedFile.path);
       notifyListeners();
     }
   }
 
-  void setName(String name) {
-    _userModel.name = name;
+  Future<bool> save(BuildContext context) async {
+    addingUser = true;
     notifyListeners();
-  }
-
-  void setAge(String age) {
-    _userModel.age = age;
-    notifyListeners();
-  }
-
-  void save() {
     try {
-      _userModel.save();
-      // Optionally, handle navigation or state change after saving.
+      var id = await context.read<FirestoreController>().addUser(
+            UserModel(
+              name: nameController.text,
+              age: ageController.text,
+            ),
+          );
+      var imageUrl = await context
+          .read<FirebaseStorageController>()
+          .uploadProfilePic(imageFile, id);
+      await context.read<FirestoreController>().updateUser(
+            UserModel(
+              name: nameController.text,
+              age: ageController.text,
+              image: imageUrl,
+            ),
+            id,
+          );
+      addingUser = false;
+      notifyListeners();
+
+      return true;
     } catch (e) {
-      // Handle exception for validation failure.
+      log(e.toString());
     }
+    addingUser = false;
+    notifyListeners();
+    return false;
   }
 }
